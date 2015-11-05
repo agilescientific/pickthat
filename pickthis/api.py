@@ -8,6 +8,10 @@ The Pick This web API interface.
 """
 import requests
 
+from .user import User
+from .pick import Pick
+from .image import Image as Img
+
 
 class PickThisAPIError(Exception):
     """
@@ -18,16 +22,18 @@ class PickThisAPIError(Exception):
 
 class API(object):
 
-    def __init__(self):
-        # Could eventually allow any server
-        self.url = 'http://dev.pick-this.appspot.com'
+    def __init__(self, url=None):
+        if url is None:
+            self.url = 'http://dev.pick-this.appspot.com/'
+        else:
+            self.url = url
         self.headers = {"Accept": "application/json"}
 
     def __api(self, endpoint, params):
         """
         Raw API call.
         """
-        url = self.url + '/' + endpoint
+        url = self.url.strip('/') + '/' + endpoint.strip('/')
         response = requests.get(url, headers=self.headers, params=params)
 
         if response.status_code != 200:
@@ -39,47 +45,60 @@ class API(object):
         """
         Fetch picks belonging to an image or to a user.
         """
-        endpoint = "update_pick"  # TODO change this.
+        endpoint = "api/picks"
+
         if image_id is not None:
-            params = {'image_key': image_id, 'all': 1}
-            all_data = self.__api(endpoint, params)
+            params = {'image_key': image_id,
+                      'all': 1}
         else:
             raise NotImplementedError
 
-        return all_data
+        all_data = self.__api(endpoint, params)
 
-        # results = []
-        # for data in all_data:
-        #     results.append(Pick(data))
-        # return results
+        results = []
+        for data in all_data:
+            results.append(Pick(data))
+        return results
 
-    def users(self, user=None):
+    def users(self, user_id=None):
         """
         Fetch a user or users.
         """
-        endpoint = "users_api"
-        if user is not None:
-            raise NotImplementedError
+        endpoint = "api/users"
+
+        params = {}
+
+        if user_id is not None:
+            params['user_id'] = user_id
         else:
             params = {'all': 1}
-            try:
-                return self.__api(endpoint, params)
-            except ValueError:
-                raise PickThisAPIError('API error.')
+
+        all_data = self.__api(endpoint, params)
+
+        results = []
+        for data in all_data:
+            results.append(User(data))
+        return results
 
     def images(self, image_id=None, user=None):
         """
         Fetch data about one or all images.
         """
-        endpoint = "image_api"
+        endpoint = "api/images"
+
+        params = {}
+
         if image_id is not None:
-            params = {'image_key': image_id}
-            return self.__api(endpoint, params)
-        elif user is not None:
-            raise NotImplementedError
+            params['image_id'] = image_id
         else:
-            params = {'all': 1}
-            try:
-                return self.__api(endpoint, params)
-            except ValueError:
-                raise PickThisAPIError('API error.')
+            params['all'] = 1
+
+        if user is not None:
+            raise NotImplementedError
+
+        all_data = self.__api(endpoint, params)
+
+        results = []
+        for data in all_data:
+            results.append(Img(data))
+        return results
