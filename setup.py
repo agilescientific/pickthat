@@ -7,8 +7,8 @@ from setuptools import setup
 import re
 
 verstr = 'unknown'
-VERSIONFILE = "pickthis/_version.py"
-with open(VERSIONFILE, "r")as f:
+VERSIONFILE = "pickthat/_version.py"
+with open(VERSIONFILE, "r") as f:
     verstrline = f.read().strip()
     pattern = re.compile(r"__version__ = ['\"](.*)['\"]")
     mo = pattern.search(verstrline)
@@ -35,16 +35,17 @@ CLASSIFIERS = ['Development Status :: 4 - Beta',
                'Programming Language :: Python :: 3.4',
                ]
 
-setup(name='pickthis',
+setup(name='pickthat',
       version=verstr,
       description='Tools for accessing pickthis.io and analysing results.',
-      url='http://github.com/agile-geoscience/pickthis',
+      url='http://github.com/agile-geoscience/pickthat',
       author='Agile Geoscience',
       author_email='hello@agilegeoscience.com',
       license='Apache 2',
-      packages=['pickthis'],
+      packages=['pickthat'],
       tests_require=['pytest', 'pytest-mpl'],
       install_requires=REQUIREMENTS,
       classifiers=CLASSIFIERS,
       zip_safe=False,
       )
+

@@ -102,3 +102,4 @@ class API(object):
         for data in all_data:
             results.append(Img(data))
         return results
+

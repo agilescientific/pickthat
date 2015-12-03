@@ -2,7 +2,7 @@
 # -*- coding: utf 8 -*-
 """
 ==================
-pickthis
+pickthat
 ==================
 """
 from .api import API
@@ -17,3 +17,4 @@ try:
     from ._version import __version__
 except ImportError:
     pass
+
