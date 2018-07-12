@@ -15,7 +15,7 @@ matplotlib=1.5.0=np110py35_0
 numpy=1.10.1=py35_0
 openblas=0.2.14=3
 openssl=1.0.2d=0
-pillow=3.0.0=py35_1
+pillow>=3.3.2
 pip=7.1.2=py35_0
 pyparsing=2.0.3=py35_0
 pyqt=4.11.4=py35_1
