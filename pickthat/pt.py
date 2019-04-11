@@ -13,7 +13,7 @@ from io import StringIO
 
 # For image manipulation
 from PIL import Image
-from mmorph import dilate, sedisk
+from .mmorph import dilate, sedisk
 
 
 def interpolate(x_in, y_in):
