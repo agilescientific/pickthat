@@ -22,6 +22,7 @@ REQUIREMENTS = ['numpy',
                 'matplotlib',
                 'pillow',
                 'shapely',
+                'requests'
                 ]
 
 CLASSIFIERS = ['Development Status :: 4 - Beta',

@@ -25,15 +25,22 @@ class API(object):
 
     def __init__(self, url=None, email=None, apikey=None):
         if url is None:
-            self.url = 'http://pickthis.serveo.net/'
+            self.url = 'https://pickthis.io/'
         else:
             self.url = url
+
         if not apikey:
             self.email = email
             self.password = getpass.getpass(prompt="Password")
-            user_response = self.__login(self.email, self.password)
+            user_response = self.__login(self.email, self.password, None)
 
             self.user = json.loads(user_response.text)
+        else:
+            self.apikey = apikey
+            self.password = 'none'
+            user_response = self.__login('none', 'none', self.apikey)
+            self.user = json.loads(user_response.text)
+            self.user['id'] = self.apikey
 
         self.headers = {"Accept": "application/json"}
 
@@ -43,21 +50,30 @@ class API(object):
         """
         url = self.url.strip('/') + '/' + endpoint.strip('/')
 
-        response = requests.get(url, headers=self.headers, params=params,
-                                auth=(int(self.user["id"]), self.password))
-
-        # if response.status_code != 200:
-        #     raise PickThisAPIError('Server error.')
+        if self.apikey != None:
+            response = requests.get(url, headers=self.headers, params=params,
+                                    auth=(self.apikey, 'none'))
+        else:
+            response = requests.get(url, headers=self.headers, params=params,
+                                    auth=(int(self.user["id"]), self.password))
+        if response.status_code != 200:
+            raise PickThisAPIError('Server error.')
 
         return response.json()
 
-    def __login(self, email, password):
+    def __login(self, email, password, apikey):
 
         url = self.url.strip('/')
 
-        resp = requests.post(url + "/login",
-                            json={"email": email,
-                                "password": password})
+        if apikey:
+            resp = requests.post(url + "/login",
+                                json={"email": None,
+                                    "password": None,
+                                    "apikey": apikey})
+        else:
+            resp = requests.post(url + "/login",
+                                json={"email": email,
+                                    "password": password})
         
         return resp
 
@@ -84,7 +100,7 @@ class API(object):
         """
         Fetch a user or users.
         """
-        endpoint = "api/users"
+        endpoint = "/users"
 
         params = {}
 
@@ -95,10 +111,10 @@ class API(object):
 
         all_data = self.__api(endpoint, params)
 
-        results = []
-        for data in all_data:
-            results.append(User(data))
-        return results
+        # results = []
+        # for data in all_data:
+        #     results.append(User(data))
+        return all_data
 
     def images(self, image_id=None, user=None):
         """
